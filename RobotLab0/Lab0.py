@@ -1,0 +1,1 @@
+#!/usr/bin/env python3from ev3dev.ev3 import *import timemotor = LargeMotor("outA")timeStart = time.time()while True:	timeNow = time.time() - timeStart	motor.run_direct(duty_cycle_sp=100)	if timeNow > 5:		motor.run_direct(duty_cycle_sp=0)		break
