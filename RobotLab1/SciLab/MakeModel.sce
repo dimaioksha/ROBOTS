@@ -1,6 +1,6 @@
 aim = [time, angle]';
 deff('e=curve(k, z)', 'e=z(2)-k(1)*(z(1) - k(2) * (1-exp(-z(1)/k(2))))');
-att=[15;0.06];
+att=[3;30];
 
 [koeffs, errs] = datafit(curve, aim, att);
 
