@@ -10,7 +10,7 @@ def ReadFile(name):
 		time.append(v[1])
 	return [values, time]
 
-for idx in range(-100, -19, 20):
+for idx in range(20, 101, 20):
 	sim = ReadFile('..\\Data\\Sim' + str(idx) + '.txt')
 	data = ReadFile('..\\Data\\log' + str(idx) + '.txt')
 	model = ReadFile('..\\Data\\Model' + str(idx) + '.txt')

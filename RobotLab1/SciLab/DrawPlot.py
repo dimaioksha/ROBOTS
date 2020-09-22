@@ -10,7 +10,7 @@ def ReadFile(name):
 		time.append(v[1])
 	return [values, time]
 
-data = ReadFile('..\\Data\\Wnls.txt')
+data = ReadFile('..\\Data\\Mst.txt')
 
 plt.plot(data[1], data[0], '-r')
 
