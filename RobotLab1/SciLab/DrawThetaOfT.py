@@ -10,7 +10,7 @@ def ReadFile(name):
 		time.append(v[1])
 	return [values, time]
 
-for idx in range(20, 101, 20):
+for idx in range(-100, -19, 20):
 	sim = ReadFile('..\\Data\\Sim' + str(idx) + '.txt')
 	data = ReadFile('..\\Data\\log' + str(idx) + '.txt')
 	model = ReadFile('..\\Data\\Model' + str(idx) + '.txt')
@@ -21,5 +21,10 @@ for idx in range(20, 101, 20):
 	plt.plot(data[1], data[0], '-.b', alpha=0.5, linewidth=2)
 	plt.plot(model[1], model[0], ':g', alpha=0.8, linewidth=4)
 	plt.plot(sim[1], sim[0], '--r')
+
+
+plt.minorticks_on()
+plt.grid(which="major", color="k", linewidth=0.5)
+plt.grid(which="minor", color="k", linestyle=":", linewidth=0.5)
 
 plt.show()

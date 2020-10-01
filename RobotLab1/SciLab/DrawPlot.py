@@ -10,8 +10,12 @@ def ReadFile(name):
 		time.append(v[1])
 	return [values, time]
 
-data = ReadFile('..\\Data\\Mst.txt')
+data = ReadFile('..\\Data\\Tm.txt')
 
 plt.plot(data[1], data[0], '-r')
+
+plt.minorticks_on()
+plt.grid(which="major", color="k", linewidth=0.5)
+plt.grid(which="minor", color="k", linestyle=":", linewidth=0.5)
 
 plt.show()
