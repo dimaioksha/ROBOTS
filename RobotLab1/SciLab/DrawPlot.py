@@ -5,7 +5,7 @@ def ReadFile(name):
 	time = []
 	values = []
 	for line in f:
-		v = [float(i) for i in line.split()]
+		v = [ float(i) for i in line.split() ]
 		values.append(v[0])
 		time.append(v[1])
 	return [values, time]
