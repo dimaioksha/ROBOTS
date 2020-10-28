@@ -12,7 +12,6 @@ ke2 = lsq(Wnls_rv, rvData(:,1))
 
 ke = (ke1+ke2) * 0.5
 
-
 km = ke
 
 
