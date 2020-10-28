@@ -15,18 +15,21 @@ def ReadFile(name, cols=2):
 
 colors = ['r', '--b']
 
-data = ReadFile('../Data/RvElectrical.txt', 2)
-Wnls = ReadFile('../Data/RvWnls.txt', 1)[0]
+data = ReadFile('../Data/FwElectrical.txt', 2)
+Wnls = ReadFile('../Data/FwWnls.txt', 1)[0]
 
+Wnls.reverse()
 ke = 0.4872294
 
 xs = [ Wnls[0], Wnls[-1] ]
 ys = [ ke * xs[0], ke * xs[-1] ]
-plt.plot(xs, ys, colors[0], alpha=1.0, linewidth=1)
-plt.plot(Wnls, data[0], colors[1], alpha=0.8, linewidth=1)
+plt.plot(xs, ys, colors[0], alpha=1.0, linewidth=1, label='ε(ω) - approximation')
+plt.plot(Wnls, data[0], colors[1], alpha=0.8, linewidth=1, label='ε(ω)')
 
 plt.minorticks_on()
-plt.grid(which="major", color="k", linewidth=0.5)
-plt.grid(which="minor", color="k", linestyle=":", linewidth=0.5)
+
+plt.grid(which="major", color="k", linewidth=0.5, alpha=0.5)
+plt.grid(which="minor", color="k", linestyle=":", linewidth=0.5, alpha=0.5)
+plt.legend()
 
 plt.show()
