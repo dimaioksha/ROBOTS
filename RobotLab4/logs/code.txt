@@ -1,0 +1,15 @@
+def ReadFile(name, cols):
+    f = open(name, 'r')
+    ret = []
+    for i in range(cols):
+        ret.append([])
+    for line in f:
+        v = [float(i) for i in line.split()]
+        for i in range(cols):
+            ret[i].append(v[i])
+    return ret
+    
+data = ReadFile('single_column_of_data.txt', 1)
+
+for i in data[0]:
+	print(i / 15)

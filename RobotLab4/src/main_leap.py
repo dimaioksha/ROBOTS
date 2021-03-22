@@ -65,43 +65,29 @@ right_angle = 0.
 dt     = 1.
 inv_dt = 1.
 
-# points = [(0., 0.25)]
+# points = [(0.25, 0.)]
 points = [(0.5, 0.5), (-0.5, 0.5), (-0.5, -0.5), (0.5, -0.5), (0.5, 0.5), (0, 0)]
 
+error = 0.025
+int_length = 0
 print("x_current, y_current, x_speed, y_speed, theta, azimuth")
 for point in points:
     x_goal = point[0]
     y_goal = point[1]
 
     time_start = time.time()
-    while (abs(x_current - x_goal) > 0.1) or (abs(y_current - y_goal) > 0.1):
+    while (abs(x_current - x_goal) > error) or (abs(y_current - y_goal) > error):
         motor_a.position = 0
         motor_d.position = 0
         
         x_vec = x_goal - x_current
         y_vec = y_goal - y_current
         
-        u_linear = math.sqrt(x_vec ** 2 + y_vec ** 2) * linear
-        u_linear = clamp(u_linear, -100, 100)
-        
         azimuth = unwrap(math.atan2(y_vec, x_vec), azimuth)
-        
-        # print("azimuth: {0}, theta: {1}".format(azimuth, theta))
-        
-        u_rotational = (azimuth - theta) * rotational
-        u_rotational = clamp(u_rotational, -100, 100)
-        
-        u_left  = clamp(u_linear - u_rotational, -100, 100)
-        u_right = clamp(u_linear + u_rotational, -100, 100)
         
         # Large motor has 720 pulses per revolutions as stated in https://github.com/ev3dev/ev3dev/issues/148#issuecomment-202498715
         new_left_angle  = motor_a.position * 4 * 0.0174532925199432 
         new_right_angle = motor_d.position * 4 * 0.0174532925199432 # TODO: Check this minus sign
-        
-        # print("motor_a: {0}, motor_d: {1}".format(motor_a.position, motor_d.position))
-        
-        # left_speed  = (new_left_angle  - left_angle)  * inv_dt # TODO: Probably this dt's are not needed because they are 
-        # right_speed = (new_right_angle - right_angle) * inv_dt # annihilated by the dt's when we are integrating position
         
         left_speed  = new_left_angle  * inv_dt
         right_speed = new_right_angle * inv_dt
@@ -118,13 +104,33 @@ for point in points:
         x_current += x_speed * dt # We are integrating position right here
         y_current += y_speed * dt # TODO: Delete this dt's
         
+        length = math.sqrt(x_vec ** 2 + y_vec ** 2)
+        int_length += length * dt;
+        int_length = clamp(int_length, 0, 40)
+        
+        course_angle = azimuth - theta
+        
+        kw = 100
+        max_speed = 100
+        v_max = 500
+        
+        base_speed = v_max * math.tanh(length) * math.cos(course_angle)
+        control    = clamp(kw * course_angle + base_speed * math.sin(course_angle) / length, -60, 60)
+        
+        base_speed = clamp(base_speed, -60, 60)
+        
+        u_left  = clamp(base_speed - control, -max_speed, max_speed)
+        u_right = clamp(base_speed + control, -max_speed, max_speed)
+        
         print("{0} {1} {2} {3} {4} {5}".format(x_current, y_current, x_speed, y_speed, theta, azimuth))
         # print("x_speed: {0}, y_speed: {1}".format(x_speed, y_speed))
         # print("x_current: {0}, y_current: {1}, azimuth: {2}".format(x_current, y_current, azimuth))
         # print("x_current: {0}, y_current: {1}, theta: {2}".format(x_current, y_current, theta))
         
-        motor_a.run_direct(duty_cycle_sp=int(threshold_clamp(u_left,  -100, 100, 5, 30)))
-        motor_d.run_direct(duty_cycle_sp=int(threshold_clamp(u_right, -100, 100, 5, 30)))
+        # motor_a.run_direct(duty_cycle_sp=int(threshold_clamp(u_left,  -100, 100, 5, 15)))
+        # motor_d.run_direct(duty_cycle_sp=int(threshold_clamp(u_right, -100, 100, 5, 15)))
+        motor_a.run_direct(duty_cycle_sp=int(u_left))
+        motor_d.run_direct(duty_cycle_sp=int(u_right))
         
         dt     = time_start - time.time()
         inv_dt = 1. / dt
